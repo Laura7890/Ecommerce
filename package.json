@@ -1,0 +1,29 @@
+{
+  "name": "mochachai",
+  "version": "1.0.0",
+  "description": "This project is a simple example of how the use chai js y mocha js",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "node ./node_modules/mocha/bin/_mocha || exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Laura7890/Ecommerce.git"
+  },
+  "keywords": [
+    "mocha",
+    "chai",
+    "javascript"
+  ],
+  "author": "Alejandra Vanegas",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Laura7890/Ecommerce/issues"
+  },
+  "homepage": "https://github.com/Laura7890/Ecommerce#readme",
+  "dependencies": {
+    "chai": "*",
+    "mocha": "*"
+  }
+}
