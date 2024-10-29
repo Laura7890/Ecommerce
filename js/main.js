@@ -238,34 +238,57 @@ botonesCategorias.forEach(boton => {
 })
 
 function actualizarBotonesAgregar(){
-    botonesAgregar = document.querySelectorAll(".producto-agregar");
-
-    botonesAgregar.forEach(boton => {
-        boton.addEventListener("click", agregarAlCarrito);
+    document.querySelectorAll('.add-to-cart').forEach(button => {
+        button.addEventListener('click', () => agregarAlCarrito(1)); // Reemplaza `1` con el ID real
     });
 }
 
 const productosEnCarrito = [];
 
-function agregarAlCarrito(e){
-    const idBoton = e.currentTarget.id;
-    const productoAgregado = productos.find(producto => producto.id === idBoton);
+async function agregarAlCarrito(productId) {
+    try {
+        const response = await fetch(`http://localhost:5000/api/products`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ productId }), // Enviar el ID en el cuerpo
+        });
 
-    if(productosEnCarrito.some(producto => producto.id === idBoton)){
-        const index = productosEnCarrito.findIndex(producto => producto.id === idBoton);
-        productosEnCarrito[index].cantidad++;
-    }else{
-        productoAgregado.cantidad = 1;
-        productosEnCarrito.push(productoAgregado);
+        if (!response.ok) {
+            throw new Error('Error en la solicitud al servidor');
+        }
+        const result = await response.json();
+        console.log('Producto agregado:', result);
+    } catch (error) {
+        console.error('Error al agregar el producto al carrito:', error);
     }
-
-    actualizarNumerito();
-
-    localStorage.setItem("productos-en-carrito", JSON.stringify(productosEnCarrito));
 }
 
-function actualizarNumerito(){
-    let nuevoNumerito = productosEnCarrito.reduce((acc, producto) => acc + producto.cantidad, 0);
-    numerito.innerText = nuevoNumerito;
+async function eliminarDelCarrito(idProducto) {
+    try {
+        const response = await fetch(`/api/cart/${idProducto}`, { method: 'DELETE' });
+        const data = await response.json();
+
+        if (response.ok) {
+            console.log(data.message);  // Confirmación de que el producto fue eliminado
+            actualizarNumerito();
+        } else {
+            console.error(data.message);  // Error si el producto no se encuentra
+        }
+    } catch (error) {
+        console.error("Error al eliminar el producto del carrito:", error);
+    }
+}
+
+async function actualizarNumerito() {
+    try {
+        const response = await fetch('/api/cart');
+        const cartData = await response.json();
+        const nuevoNumerito = cartData.reduce((acc, producto) => acc + producto.cantidad, 0);
+        numerito.innerText = nuevoNumerito;
+    } catch (error) {
+        console.error("Error al actualizar el contador del carrito:", error);
+    }
 }
 
